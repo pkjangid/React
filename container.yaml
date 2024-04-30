@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: "Deployment"
+metadata:
+  name: communication-service
+  labels:
+    app: communication-service
+  namespace: prod
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: communication-service
+  template:
+    metadata:
+      labels:
+        app: communication-service
+    spec:
+      containers:
+      - name: communication-service
+        image: 997032381188.dkr.ecr.ap-south-1.amazonaws.com/accosis-communication:15-image
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5001
+          name: communication
+        - containerPort: 9071
+          name: grpc  
+        resources:
+          limits:
+            cpu: "250m"
+            memory: "500Mi"
+          requests:
+            cpu: "250m"
+            memory: "500Mi"
