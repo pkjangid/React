@@ -1,50 +1,3 @@
-apiVersion: apps/v1
-kind: "Deployment"
-metadata:
-  name: admin-react-service
-  labels:
-    app: admin-react-service
-  namespace: prod
-spec:
-  replicas: 1
-  revisionHistoryLimit: 1
-  selector:
-    matchLabels:
-      app: admin-react-service
-  template:
-    metadata:
-      labels:
-        app: admin-react-service
-    spec:
-      containers:
-        - name: admin-react-service
-          image: CONTAINER_IMAGE
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 3000
-              name: admin-react
-          resources:
-            limits:
-              cpu: "125m"
-              memory: "250Mi"
-            requests:
-              cpu: "125m"
-              memory: "250Mi"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: admin-react-service
-  namespace: prod
-spec:
-  selector:
-    app: admin-react-service
-  ports:
-    - name: admin-react-service
-      protocol: TCP
-      port: 80
-      targetPort: 3000
----
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -60,10 +13,17 @@ spec:
     - host: yourcodemate.in
       http:
         paths:
-        - path: /
+        - path: /communication
           pathType: Prefix
           backend:
             service:
-              name: admin-react-service
+              name: communication-service
               port:
-                number: 3000
+                number: 5001
+        - path: /customers
+          pathType: Prefix
+          backend:
+            service:
+              name: customers-service
+              port:
+                number: 5003
